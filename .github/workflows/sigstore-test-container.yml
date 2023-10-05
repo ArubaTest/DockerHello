@@ -18,9 +18,9 @@ jobs:
       - name: Check install!
         run: cosign version
       - name: Pull Rekor Public Key
-        run: curl -o rekor.pub https://34.171.57.150/rekor/api/v1/log/publicKey
+        run: curl -k -o rekor.pub https://34.171.57.150/rekor/api/v1/log/publicKey
       - name: Pull Fulcio Root Cert
-        run: curl -o fulcio.root.crt https://34.171.57.150/fulcio/api/v1/rootCert
+        run: curl -k -o fulcio.root.crt https://34.171.57.150/fulcio/api/v1/rootCert
       - name: Setup Image
         run: |
           IMAGE_NAME=$(uuidgen) 
