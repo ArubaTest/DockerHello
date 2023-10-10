@@ -29,15 +29,30 @@ jobs:
           IMAGE=ttl.sh/$IMAGE_NAME:5m
           cosign copy alpine $IMAGE
           echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+      - name: cosign login
+        run: cosign login -u AWS -p eyJwYXlsb2FkIjoiT3M4MDczZ1NDWHNIejUyL2NTdHR5dnBUbU5JT0dieFlXWnBJVHNvUE40Um1vT2g2a0t5VVowcmE4ckFLL2RuamkxVzZQeS9mYjZMYmtnaHMveUliUVhxZ1BScmpTVGVzWlNWZHpKblFjbUhGczRHRTBTeERPM1o5TElMZEZIdmQyYkgrelpLNEVhTk9YcHBiWHoyVEk2enRZMnM2bnlzK1crZTlZSjFPR01zdmoxdVJZV1NTY0srWjM2bVBDUlZ4TlU3REpzaWk1cFEzMlVqb0VSaDNZUUZ2ekRITjhjdnFja0FoekQyZndXSzhPQTBYbVVhSU52cmlGUlFSaXUvVTJmZ2lWRkZXWUxhVE8yOXYxZ0w2QVRkdTNPaXl6SUxDL3BESmo5d3ZCUjNWMVFBN1p5d0VkS3I4bkJqSWZSa1ZUdStiM3VsWitRMFFQOVdIM1VnM005akZTdTBQZmpxbSt1WW5vUjJra1d5RHpMeTA3aC9LVzBnZWFDUEJ0MGtvVXl2emlIUUJSa0JpbHFyQ01DRy9FTmNmRTZpVlBLZTd4SS9hMnAxRng0VEJNc3ovUzd6VmUyc1JLdVpPMTl4S1F5RnplN1FIR2g5NWVtVFpFVXZqbE9PRGZpWkdwVlJCTU5jYUwrdTFwVWJZTVExZ3BNbDZ2aW05NzBLODVQcjQzZDFOdDd6K0U3d015OVlEV1c3ZzRHQXdYaEM4VUNicmlaUkN6TXF5NG9scUwrYXZ0aE5FVm5FeG9RTVlGc2FNWXY3dWh6VGtHM20wb0lVcmtsb3BBa3RUU2k0bkxLYVZMekZkeEZyM0xFdDRXZStacnA4NUkrUDQ2bkhnNXV1aXZrb0orZWordE1HVlNlaGppRzdmdmNIc1NjRXJ3VE4yclhwMjNHckR6NEVoaVVYeENYWFRZa1BnYW1UcnY4K3BCVlNGV2JqYXFLZ25ON3hKT0Z1Q2NidEJaMG5xQnlJUm9JTnpPWElPZTdsanlkK0lia0t4cnA1MDdUU3hRTThwSndQNzZ6akZHcVp4WDYzRVcwMlFtbUQ3dXgrVFgxYTg1VlIrc01iY1huOUgyR3htYmJ2Z2l5R3JsU2RBNzJFaEtPcEd3amxyM1AvOHY1aEM2d2tGc2R4a21teGtabDlWWUY3VHN4ektoVFJRWEZTcnl0S2VEV1RQZ3Ztdk0za1E3QmVWSXcyaWxvMjJuY1ZpeXVDdlM4c1dhYkM1VGZ5MWc3VlRDVXNPNXZGdGk5NTR2YlhtdTNSYXIvZHR6K1JjcmJRRjh0dTF3d1FsN2xrUVhCVWhBd1Y1OGZPUFRzb3N6LzJjVHpnTnFhdzRNdUpaUDUreFFGK1YzNmNid2NjTTlUWjVEM29Jb3lkckc4REtBR2sycjdEaDBuVVpsNmtSSFE9PSIsImRhdGFrZXkiOiJBUUVCQUhqNmxjNFhJSncvN2xuMEhjMDBETWVrNkdFeEhDYlk0UklwVE1DSTU4SW5Vd0FBQUg0d2ZBWUpLb1pJaHZjTkFRY0dvRzh3YlFJQkFEQm9CZ2txaGtpRzl3MEJCd0V3SGdZSllJWklBV1VEQkFFdU1CRUVERFBUZjB0eE5pelBucXZjcXdJQkVJQTdQWFFNOUVQNHYrRVpDeTNFSmxqeG0xTk54M2hndmRsazU0dEJiNG5aWmM5R0NtSm5PMGwzZjdoYk4wajVldEdYVHZCa0c3SDVOKzExRGo4PSIsInZlcnNpb24iOiIyIiwidHlwZSI6IkRBVEFfS0VZIiwiZXhwaXJhdGlvbiI6MTY5Njk1MDA3Nn0= 987780704976.dkr.ecr.us-west-2.amazonaws.com
       - name: Sign Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
           SIGSTORE_ROOT_FILE: "fulcio.root.crt"
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
         run: cosign sign --rekor-url=https://34.171.57.150/rekor --fulcio-url=https://34.171.57.150/fulcio ${{ env.IMAGE }} -y
+      - name: Sign ECR Image
+        env:
+          SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
+          SIGSTORE_ROOT_FILE: "fulcio.root.crt"
+          SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
+        run: cosign sign --rekor-url=https://34.171.57.150/rekor --fulcio-url=https://34.171.57.150/fulcio 987780704976.dkr.ecr.us-west-2.amazonaws.com/arubaos/container-manager:1.2.0-alpha.1-arm64 -y
+
       - name: Verify Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
           SIGSTORE_ROOT_FILE: "fulcio.root.crt"
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
         run: cosign verify --rekor-url=https://34.171.57.150/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com ${{ env.IMAGE }}
+      - name: Verify ECR Image
+        env:
+          SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
+          SIGSTORE_ROOT_FILE: "fulcio.root.crt"
+          SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
+        run: cosign verify --rekor-url=https://34.171.57.150/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com 987780704976.dkr.ecr.us-west-2.amazonaws.com/arubaos/container-manager:1.2.0-alpha.1-arm64
