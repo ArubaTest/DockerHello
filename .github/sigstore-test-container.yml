@@ -41,3 +41,5 @@ jobs:
           SIGSTORE_ROOT_FILE: "fulcio.root.crt"
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
         run: cosign verify --rekor-url=https://34.171.57.150/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com ${{ env.IMAGE }}
+      - name: Download prove
+        run: echo "test"
