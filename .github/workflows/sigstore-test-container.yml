@@ -47,18 +47,18 @@ jobs:
           SIGSTORE_ROOT_FILE: "fulcio.root.crt"
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
         run: cosign sign --rekor-url=https://34.171.57.150/rekor --fulcio-url=https://34.171.57.150/fulcio ${{ env.IMAGE }} -y
-      - name: Sign ECR Image
-        env:
-          SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
-          SIGSTORE_ROOT_FILE: "fulcio.root.crt"
-          SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
-        run: cosign sign --rekor-url=https://34.171.57.150/rekor --fulcio-url=https://34.171.57.150/fulcio 987780704976.dkr.ecr.us-west-2.amazonaws.com/arubaos/container-manager:1.2.0-alpha.1-arm -y
       - name: Verify Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
           SIGSTORE_ROOT_FILE: "fulcio.root.crt"
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
         run: cosign verify --rekor-url=https://34.171.57.150/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com ${{ env.IMAGE }}
+      - name: Sign ECR Image
+        env:
+          SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
+          SIGSTORE_ROOT_FILE: "fulcio.root.crt"
+          SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
+        run: cosign sign --rekor-url=https://34.171.57.150/rekor --fulcio-url=https://34.171.57.150/fulcio 987780704976.dkr.ecr.us-west-2.amazonaws.com/arubaos/container-manager:1.2.0-alpha.1-arm -y
       - name: Verify ECR Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
