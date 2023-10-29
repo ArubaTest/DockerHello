@@ -35,7 +35,6 @@ jobs:
         run: |
           IMAGE_URL=`cat imageurl`
           echo $IMAGE_URL
-          ls -l
       - name: Try get OIDC token
         env: 
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -68,10 +67,14 @@ jobs:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
           SIGSTORE_ROOT_FILE: "fulcio.root.crt"
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
-        run: cosign sign --rekor-url=https://34.171.57.150/rekor --fulcio-url=https://34.171.57.150/fulcio $IMAGE_URL -y
+        run: |
+          IMAGE_URL=`cat imageurl`
+          cosign sign --rekor-url=https://34.171.57.150/rekor --fulcio-url=https://34.171.57.150/fulcio $IMAGE_URL -y
       - name: Verify ECR Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
           SIGSTORE_ROOT_FILE: "fulcio.root.crt"
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
-        run: cosign verify --rekor-url=https://34.171.57.150/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com $IMAGE_URL
+        run: | 
+          IMAGE_URL=`cat imageurl`
+          cosign verify --rekor-url=https://34.171.57.150/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com $IMAGE_URL
