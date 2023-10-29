@@ -23,6 +23,8 @@ jobs:
         run: curl -k -o rekor.pub https://34.171.57.150/rekor/api/v1/log/publicKey
       - name: Pull Fulcio Root Cert
         run: curl -k -o fulcio.root.crt https://34.171.57.150/fulcio/api/v1/rootCert
+      - name: print envs
+        run: env
       - name: Setup Image
         run: |
           IMAGE_NAME=$(uuidgen) 
