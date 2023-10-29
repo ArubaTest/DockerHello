@@ -37,6 +37,7 @@ jobs:
       - name: Try get OIDC token
         run: |
           echo $SIGSTORE_ID_TOKEN
+          echo ${{ vars.ECR_ACCOUNT }}
           echo $ACTIONS_ID_TOKEN_REQUEST_URL
           echo $ACTIONS_ID_TOKEN_REQUEST_TOKEN
       - name: cosign login
