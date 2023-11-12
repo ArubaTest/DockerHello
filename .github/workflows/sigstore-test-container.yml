@@ -19,6 +19,8 @@ jobs:
          cosign-release: 'v2.0.1'
       - name: Check install!
         run: cosign version
+      - name: Check docker install!
+        run: command -v docker
       - name: Pull Rekor Public Key
         run: curl -k -o rekor.pub https://34.171.57.150/rekor/api/v1/log/publicKey
       - name: Pull Fulcio Root Cert
