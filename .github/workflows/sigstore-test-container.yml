@@ -35,26 +35,6 @@ jobs:
           IMAGE=ttl.sh/$IMAGE_NAME:5m
           cosign copy alpine $IMAGE
           echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
-      - name: Setup Image URL
-        run: |
-          IMAGE_URL=`cat imageurl`
-          echo $IMAGE_URL
-      - name: Try get OIDC token
-        env: 
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo $github_token
-          echo ${{ vars.ECR_ACCOUNT }}
-          echo ${{ secrets.ECR_PASSWORD }}
-      - name: Cosign login
-        env: 
-          AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          ecr_account: ${{ vars.ECR_ACCOUNT }}
-        run: | 
-          ecr_password=`docker run -i --rm -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${aws_secret_access_key} -e AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} --network host amazon/aws-cli ecr get-login-password`
-          cosign login -u $ecr_account -p $ecr_password 987780704976.dkr.ecr.us-west-2.amazonaws.com
       - name: Sign Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
@@ -67,6 +47,19 @@ jobs:
           SIGSTORE_ROOT_FILE: "fulcio.root.crt"
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
         run: cosign verify --rekor-url=https://sigstore-dev.it.hpe.com/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com ${{ env.IMAGE }}
+      - name: Cosign login
+        env: 
+          AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ecr_account: ${{ vars.ECR_ACCOUNT }}
+        run: | 
+          ecr_password=`docker run -i --rm -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${aws_secret_access_key} -e AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} --network host amazon/aws-cli ecr get-login-password`
+          cosign login -u $ecr_account -p $ecr_password 987780704976.dkr.ecr.us-west-2.amazonaws.com
+      - name: Show Input Image URL
+        run: |
+          IMAGE_URL=`cat imageurl`
+          echo $IMAGE_URL
       - name: Sign ECR Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
