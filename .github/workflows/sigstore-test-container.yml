@@ -46,10 +46,7 @@ jobs:
           echo $github_token
           echo ${{ vars.ECR_ACCOUNT }}
           echo ${{ secrets.ECR_PASSWORD }}
-      - name: cosign login
-        run: |
-          cosign login -u AWS -p eyJwYXlsb2FkIjoiNmw2RDFGR3hmWVBlOWFYelRMTURhWWUwWlZBSU5jV3lhZEg1MHQ2ZmZDRFU2Ylg4VGhpUUkrVmJCM01hTERGRUFDeFp5aklrZkFZb2Fta21BY0E3czFieUQ3Um8zQXRoOWQrUHk3Q0R1c003NzU1Qll5V0hCTUJBanNjVHVGR1Y1RDJyUUpIY0ZlU2trbjZjTlJmdFRUZ0dMVlErczhTQUxJcG4rc3JXTG0vZ2hJU1F6NzJkZ21CM3dCWXp1eWt4OWg0Y1NpUHBpWEtDQ2xnYlVQcFk0a2txc1RIZTNpNzNxQUdLVHUyWXZIVWYvTXRuQ1lLYUxSNWVBUXdkUkdFaGxKWXA5L1V0blFRMTdpNEg5R1BaakthcExYRFV2SHB5SDVuVkg5M0FRdHJLRjdoY3BubHBTVEt6NUtDMU5KMVNzNVNNbTM3VHpVMDRBM3hpNmJneHd5RHBETzVVQVBHb1BBZ0V5a3NJc2JnSVpwa0ZrNHVGVWlyRi9vQnpBOG51aENBMmgrbytXWmhUS1ExL3JoeGtWTzM1QXFPUEZpcXJGSEdOYzlOaFZVdzBJY2JBUHlST0RHckh5R294QXZ1KzF6Z2dNUC9WK3lNUVlJTXN5bDJ5ZWtYdHdwQW1CZmVLV2NXbXd5alFSc0RCMjRQdjU5NHl5RG9kcDAyTkJRVWRoQmhXWloxdXFXdmFkMTdZSDFJV2JRdVMrRVg3S0xyVFM3eXVjV3NyTkRNU0FlRis0NDBHM1p6UmRNZWpsNXBSaVRDR1pwL1ZjQndMMXhiMkU2Wmo4eThsMWlDOVByUkJEcmxWOVlsdWZ6eGVaUXArbmEwU0hsR096VWxyMkFGZkVLaS9nOXlYMU5uWHFUUkZER0hGNkI0MkpNS1NJQWZmVEhERVgwenAxM2gzcDNBVXFpNllDUDE1UXVON0huWkFyNFA0U3UxZURpelJKbnpCZHovcFcwNTZMRFloSjBHNzJjVnFZTFd1VHRuMXpSRTRCWkh5ZVAzdEhCWmtoYTVyVHFRWE1QcExtQTE5QmRSdGJ3NUZWckVYTzRHT0lDU2NHWHFqdll2Q1RaeklFclhBbEQ2MWhiZ05uL2p4Rjd4RVExSTM3Wks0Ulg1Z0FxNkVJV1VYck90QWJoa08wS3ZsYmpMYmhQV24zcGh2R0RpZm8xZHZCMW5WME0vK3ozVDNqUlZuMWt3ZTNiOGEwQlg5N1k4bnRkd2tncWU4YzhwekRBTmNhYlJRWlV1RWFiQTJqNUpuMzBNZEorQmJqTmdINThQMDhmaEVQUWJKSXRqM0F3QzN2VzFzc2l5VnJkNDVqWHo2UGNhR3JaOGpmaTgxb1dxSUw1ZjA1b2pxbVNMMVlObENjL0lDdEo4eVNCVTZ5NFpaWkhoTGJwMVZtUHVjVXc9PSIsImRhdGFrZXkiOiJBUUVCQUhqNmxjNFhJSncvN2xuMEhjMDBETWVrNkdFeEhDYlk0UklwVE1DSTU4SW5Vd0FBQUg0d2ZBWUpLb1pJaHZjTkFRY0dvRzh3YlFJQkFEQm9CZ2txaGtpRzl3MEJCd0V3SGdZSllJWklBV1VEQkFFdU1CRUVEQmJQcnA0RDdHVnVWeFlyK0FJQkVJQTdmR1hLZmFZankvMy9UNm0wMDVzV2NEYkFxVzJMNCtLUm1kUWNQWGU2M2ZQM25ueEk0Um00cnVrRlNwTGtwakpQMUhjbDNaSWdIYXlwcFFjPSIsInZlcnNpb24iOiIyIiwidHlwZSI6IkRBVEFfS0VZIiwiZXhwaXJhdGlvbiI6MTY5OTQ3NzM5OH0= 987780704976.dkr.ecr.us-west-2.amazonaws.com
-      - name: Test env and secrets
+      - name: Cosign login
         env: 
           AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
@@ -63,13 +60,13 @@ jobs:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
           SIGSTORE_ROOT_FILE: "fulcio.root.crt"
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
-        run: cosign sign --rekor-url=https://34.171.57.150/rekor --fulcio-url=https://34.171.57.150/fulcio ${{ env.IMAGE }} -y
+        run: cosign sign --rekor-url=https://sigstore-dev.it.hpe.com/rekor --fulcio-url=https://sigstore-dev.it.hpe.com/fulcio ${{ env.IMAGE }} -y
       - name: Verify Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
           SIGSTORE_ROOT_FILE: "fulcio.root.crt"
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
-        run: cosign verify --rekor-url=https://34.171.57.150/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com ${{ env.IMAGE }}
+        run: cosign verify --rekor-url=https://sigstore-dev.it.hpe.com/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com ${{ env.IMAGE }}
       - name: Sign ECR Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
@@ -77,7 +74,7 @@ jobs:
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
         run: |
           IMAGE_URL=`cat imageurl`
-          cosign sign --rekor-url=https://34.171.57.150/rekor --fulcio-url=https://34.171.57.150/fulcio $IMAGE_URL -y
+          cosign sign --rekor-url=https://sigstore-dev.it.hpe.com/rekor --fulcio-url=https://sigstore-dev.it.hpe.com/fulcio $IMAGE_URL -y
       - name: Verify ECR Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
@@ -85,4 +82,4 @@ jobs:
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
         run: | 
           IMAGE_URL=`cat imageurl`
-          cosign verify --rekor-url=https://34.171.57.150/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com $IMAGE_URL
+          cosign verify --rekor-url=https://sigstore-dev.it.hpe.com/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com $IMAGE_URL
