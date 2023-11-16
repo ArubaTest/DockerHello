@@ -24,9 +24,9 @@ jobs:
       - name: Check aws install!
         run: command -v aws
       - name: Pull Rekor Public Key
-        run: curl -k -o rekor.pub https://34.171.57.150/rekor/api/v1/log/publicKey
+        run: curl -k -o rekor.pub https://sigstore-dev.it.hpe.com/rekor/api/v1/log/publicKey
       - name: Pull Fulcio Root Cert
-        run: curl -k -o fulcio.root.crt https://34.171.57.150/fulcio/api/v1/rootCert
+        run: curl -k -o fulcio.root.crt https://sigstore-dev.it.hpe.com/fulcio/api/v1/rootCert
       - name: print envs
         run: env
       - name: Setup Image
