@@ -60,6 +60,7 @@ jobs:
         run: |
           IMAGE_URL=`cat imageurl`
           echo $IMAGE_URL
+          echo https://github.com/${{ github.workflow_ref }}
       - name: Sign ECR Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
@@ -75,5 +76,4 @@ jobs:
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
         run: | 
           IMAGE_URL=`cat imageurl`
-          echo https://github.com/${{ github.workflow_ref }}
           cosign verify --rekor-url=https://sigstore-dev.it.hpe.com/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com $IMAGE_URL
