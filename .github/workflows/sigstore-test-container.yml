@@ -1,5 +1,5 @@
 name: Cosign Sign Container Test
-on: [workflow_dispatch]
+on: [workflow_dispatch,push]
 jobs:
   Cosign-Sign-Container-Test:
     runs-on: ubuntu-latest
@@ -29,24 +29,6 @@ jobs:
         run: curl -k -o fulcio.root.crt https://sigstore-dev.it.hpe.com/fulcio/api/v1/rootCert
       - name: print envs
         run: env
-      - name: Setup Image
-        run: |
-          IMAGE_NAME=$(uuidgen) 
-          IMAGE=ttl.sh/$IMAGE_NAME:5m
-          cosign copy alpine $IMAGE
-          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
-      - name: Sign Image
-        env:
-          SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
-          SIGSTORE_ROOT_FILE: "fulcio.root.crt"
-          SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
-        run: cosign sign --rekor-url=https://sigstore-dev.it.hpe.com/rekor --fulcio-url=https://sigstore-dev.it.hpe.com/fulcio ${{ env.IMAGE }} -y
-      - name: Verify Image
-        env:
-          SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
-          SIGSTORE_ROOT_FILE: "fulcio.root.crt"
-          SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
-        run: cosign verify --rekor-url=https://sigstore-dev.it.hpe.com/rekor --certificate-identity https://github.com/${{ github.workflow_ref }} --certificate-oidc-issuer https://token.actions.githubusercontent.com ${{ env.IMAGE }}
       - name: Cosign login
         env: 
           AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
