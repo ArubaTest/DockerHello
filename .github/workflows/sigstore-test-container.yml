@@ -27,22 +27,16 @@ jobs:
         run: curl -k -o rekor.pub https://sigstore-dev.it.hpe.com/rekor/api/v1/log/publicKey
       - name: Pull Fulcio Root Cert
         run: curl -k -o fulcio.root.crt https://sigstore-dev.it.hpe.com/fulcio/api/v1/rootCert
-      - name: print envs
-        run: env
       - name: Cosign login
         env: 
+          AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
           AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ecr_account: ${{ vars.ECR_ACCOUNT }}
         run: | 
           ecr_password=`docker run -i --rm -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${aws_secret_access_key} -e AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} --network host amazon/aws-cli ecr get-login-password`
-          cosign login -u $ecr_account -p $ecr_password 987780704976.dkr.ecr.us-west-2.amazonaws.com
-      - name: Show Input Image URL
-        run: |
-          IMAGE_URL=`cat imageurl`
-          echo $IMAGE_URL
-          echo https://github.com/${{ github.workflow_ref }}
+          cosign login -u $ecr_account -p $ecr_password $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - name: Sign ECR Image
         env:
           SIGSTORE_REKOR_PUBLIC_KEY: "rekor.pub"
@@ -50,6 +44,7 @@ jobs:
           SIGSTORE_CT_LOG_PUBLIC_KEY_FILE: "ct_pub.pem"
         run: |
           IMAGE_URL=`cat imageurl`
+          echo $IMAGE_URL
           cosign sign --rekor-url=https://sigstore-dev.it.hpe.com/rekor --fulcio-url=https://sigstore-dev.it.hpe.com/fulcio $IMAGE_URL -y
       - name: Verify ECR Image
         env:
